@@ -1,0 +1,57 @@
+#!/bin/bash
+# Script to generate random password with the length you want
+# Copyright (C) 2014 Catalin Costin Stanciu - All Rights Reserved
+# Permission to copy and modify is granted under the APACHE 2.0 license
+# Last revised 22/06/2014
+
+<<LICENSE
+Copyright 2014 Catalin Stanciu
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+LICENSE
+
+
+############################
+## DEFAULT CONFIGURATION  ##
+############################
+
+# Password size
+SIZE=32 
+
+############################
+############################
+
+function help() {
+    echo "usage : `basename $0` [OPTIONS]"
+    echo "OPTIONS: "
+    echo "         -s : Define the password size. Default 32."
+    echo "         -h : Show the help." 
+}
+
+function randompassword() {
+    PASSWORD=`< /dev/urandom tr -dc A-Za-z0-9 | head -c $SIZE`
+    echo  $PASSWORD
+}
+
+
+while getopts "hs:" opt; do
+    case "$opt" in
+    h)  help
+        exit 0
+    ;;
+    s)  SIZE=$OPTARG
+    ;;
+    esac
+done
+
+randompassword
+
