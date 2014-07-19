@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# Backup directory
+backup_dir='/home/backups/asterisk'
+data_dir='/etc/asterisk'
+name='asterisk'
+date=$(date +"%d-%m-%Y_%H%M%S")
+backup_name="$name-backup-$date.tar.gz"
+
+if [ ! -d $backup_dir ]; then
+	echo "WARNING - Backup dir created $backup_dir because not existent "
+	mkdir -p $backup_dir
+fi
+
+
+tar cvzf $backup_dir/$backup_name $data_dir
+echo "Backup from $data_dir to $backup_dir/$backup_name done"
+
+
+
+
+
+
