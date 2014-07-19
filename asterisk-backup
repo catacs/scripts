@@ -25,6 +25,7 @@ LICENSE
 #######################################
 
 backup_dir='/home/backups/asterisk'     # Directory where will be saved the backup
+backup_dir2=''                          # Second directory to copy the backup
 data_dir='/etc/asterisk'                # Directory to be backuped 
 name='asterisk'                         # Name of application we are making the backup
 date=$(date +"%d-%m-%Y_%H%M%S")         # We use the date to append to the name to be 
@@ -34,14 +35,68 @@ backup_name="$name-backup-$date.tar.gz" # Entire name of the  backup
 ########################################
 ########################################
 
+########################################
+##          Helper functions
+########################################
 
-if [ ! -d $backup_dir ]; then
-	echo "WARNING - Backup dir created $backup_dir because not existent "
-	mkdir -p $backup_dir
-fi
+function log() {
+ echo "[$(date +"%d-%m-%Y %H:%M:%S")] $1" 
+}
+
+## Function to check if a directory exists and
+## create it if not
+
+function check_dir() {
+    if [ ! -d $1 ]; then
+        mkdir -p $1 2>1 >/dev/null 
+        if [ $? -eq 0 ]; then
+           log "WARNING - Directory created $1 because not existent" 
+	   return 0	
+        else
+           log "WARNING - Directory was not created $1 because command failed"
+	   return 1
+	fi
+    fi
+}
 
 
-tar cvzf $backup_dir/$backup_name $data_dir
-echo "Backup from $data_dir to $backup_dir/$backup_name done"
+## Function to create a backup using tar.gz compressed
+## files
+
+function backup() {
+    tar czf $1 $2 2>1 > /dev/null
+    if [ $? -eq 0 ]; then
+	log "Backup from $2 to $1 done"
+	return 0
+    else
+        log "Backup from $2 to $1 failed"
+	return 1
+    fi
+}
 
 
+##
+## Main program function
+##
+
+function main() {
+   log "Creating backup $backup_dir/$backup_name ..."
+   check_dir $backup_dir	
+   backup $backup_dir/$backup_name $data_dir
+   first_backup=$?
+   if [ "$backup_dir2" != "" ]; then
+       log "Creating backup $backup_dir2/$backup_name ..."
+       check_dir $backup_dir2
+       if [ $first_backup -eq 0 ] && [ -f $backup_dir/$backup_name ]; then
+            cp $backup_dir/$backup_name $backup_dir2/$backup_name
+            log "Backup2 copied because already created"
+       else
+            backup $backup_dir2/$backup_name $data_dir
+            log "Backup2 entirely created"
+       fi
+   fi
+}
+
+
+# calling main function to start program
+main
