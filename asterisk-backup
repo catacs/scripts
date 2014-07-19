@@ -1,11 +1,39 @@
 #!/bin/bash
+# Script to generate random password with the length you want
+# Copyright (C) 2014 Catalin Costin Stanciu - All Rights Reserved
+# Permission to copy and modify is granted under the APACHE 2.0 license
+# Last revised 19/07/2014
 
-# Backup directory
-backup_dir='/home/backups/asterisk'
-data_dir='/etc/asterisk'
-name='asterisk'
-date=$(date +"%d-%m-%Y_%H%M%S")
-backup_name="$name-backup-$date.tar.gz"
+<<LICENSE
+Copyright 2014 Catalin Stanciu
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+LICENSE
+
+
+#######################################
+##        CONFIGURATION              ##
+#######################################
+
+backup_dir='/home/backups/asterisk'     # Directory where will be saved the backup
+data_dir='/etc/asterisk'                # Directory to be backuped 
+name='asterisk'                         # Name of application we are making the backup
+date=$(date +"%d-%m-%Y_%H%M%S")         # We use the date to append to the name to be 
+                                        # sure when was made the backup
+backup_name="$name-backup-$date.tar.gz" # Entire name of the  backup
+
+########################################
+########################################
+
 
 if [ ! -d $backup_dir ]; then
 	echo "WARNING - Backup dir created $backup_dir because not existent "
@@ -15,9 +43,5 @@ fi
 
 tar cvzf $backup_dir/$backup_name $data_dir
 echo "Backup from $data_dir to $backup_dir/$backup_name done"
-
-
-
-
 
 
